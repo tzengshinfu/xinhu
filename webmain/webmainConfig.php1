@@ -33,4 +33,9 @@ return array(
 	'asynsend'	=> '0',	//是否异步发送提醒消息，0同步，1自己服务端异步，2官网VIP用户异步
 	'install'	=> true,	//已安装，不要去掉啊
 	'sqllog'	=> false,	//是否记录sql日志保存upload/sqllog下
+	
+	'loginyzm'  => 4, //使用帳號+密碼進行LDAP驗證及同步
+	'ldap_url'    => 'LDAP://0.0.0.0', //LDAP URL
+	'ldap_base_dn'=> 'DC=xxx,DC=COM', //LDAP Base DN
+	'ad_domain' => 'xxx', //Active Directory網域
 );

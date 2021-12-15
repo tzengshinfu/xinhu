@@ -230,7 +230,7 @@ $(document).ready(function(){
 			<td class="tdinput"><input id="qqmapkey_{rand}" placeholder="可不设置，可到https://lbs.qq.com/下申请" class="form-control"></select></td>
 			
 			<td  align="right">登录方式：</td>
-			<td class="tdinput"><select id="loginyzm_{rand}"  class="form-control"><option value="0">仅使用帐号+密码</option><option value="1">帐号+密码/手机+手机验证码</option><option value="2">帐号+密码+手机验证码</option><option value="3">仅使用手机+手机验证码</option></select></td>
+			<td class="tdinput"><select id="loginyzm_{rand}"  class="form-control"><option value="0">仅使用帐号+密码</option><option value="1">帐号+密码/手机+手机验证码</option><option value="2">帐号+密码+手机验证码</option><option value="3">仅使用手机+手机验证码</option><option value="4">使用帳號+密碼進行LDAP驗證及同步</option></select></td>
 			
 		</tr>
 		

@@ -52,6 +52,92 @@ class loginClassModel extends Model
 			$logyzbo = true;
 		}
 
+		#region 使用帳號+密碼進行LDAP驗證
+		if($loginyzm === 4 && $user !== 'admin'){
+			#region 取得LDAP使用者資訊
+			$ldapUserInfo = c('ldap')->getUserInfo($user, $pass);
+
+			//當LDAP使用者資訊型態不為陣列時則為錯誤訊息
+			if(!is_array($ldapUserInfo))
+			{
+			    return $ldapUserInfo;
+			}
+			#endregion
+
+			#region 以LDAP組織代號反查信呼組織ID
+			$existingCompany = $this->db->getone('[Q]company',"`num`='" . $ldapUserInfo['organizationID'] . "'");
+
+			if (!$existingCompany)
+			{
+				return '組織代號[' . $ldapUserInfo['organizationID'] . "]未建立";
+			}
+
+			$ldapUserInfo["organizationID"] = $existingCompany["id"];
+			#endregion
+
+			#region 以LDAP部門代號反查信呼部門ID
+			$existingDept = $this->db->getone('[Q]dept',"`num`='" . $ldapUserInfo["deptID"] . "'");
+
+			if (!$existingDept)
+			{
+				return '部門代號[' . $ldapUserInfo["deptID"] . "]未建立";
+			}
+
+			$ldapUserInfo["deptID"] = $existingDept["id"];
+			$ldapUserInfo["deptName"] = $existingDept["name"];
+			#endregion
+
+			#region 以LDAP主管工號反查信呼主管使用者ID
+			$existingManager = $this->db->getone('[Q]admin',"`user`='" . $ldapUserInfo["managerID"] . "'");
+
+			if (!$existingManager)
+			{
+				$ldapUserInfo["managerID"] = '';
+				$ldapUserInfo["managerName"] = '';
+			}else{
+				$ldapUserInfo["managerID"] = $existingManager["id"];
+				$ldapUserInfo["managerName"] = $existingManager["name"];
+			}
+			#endregion
+
+			#region 用LDAP使用者資訊新增/更新用戶表紀錄
+			$existingUser = $this->db->getone('[Q]admin',"`user`='" . $ldapUserInfo["userID"] . "'");
+
+			$xinhuUserInfo	= array(
+				'user' => $ldapUserInfo["userID"],
+				'name' => $ldapUserInfo["userName"],
+				'pass' => md5($pass),
+				'tel' => $ldapUserInfo["telephoneNumber"],
+				'deptid' => $ldapUserInfo["deptID"],
+				'deptname' => $ldapUserInfo["deptName"],
+				'superid' => $ldapUserInfo["managerID"],
+				'superman' => $ldapUserInfo["managerName"],
+				'ranking' => $ldapUserInfo["title"],
+				'mobile' => $ldapUserInfo["cellPhone"],
+				'email' => $ldapUserInfo["email"],
+				'weixinid' => $ldapUserInfo["wechatID"],
+				'companyid' => $ldapUserInfo["organizationID"],
+				'comid' => $ldapUserInfo["organizationID"],
+			);
+
+			$result = false;
+
+			if (is_array($existingUser))
+			{
+				$result = $this->db->record('[Q]admin', $xinhuUserInfo, "`user`='" . $user . "'");
+			}else{
+				$result = $this->db->record('[Q]admin', $xinhuUserInfo, '');
+			}
+
+			m('admin')->updateinfo("and a.user='" . $user . "'");
+			#endregion
+
+			if (!$result)
+			{
+				return '更新用戶表失敗，請洽管理員';
+			}
+		}
+		#endregion
 		
 		$fields = '`pass`,`id`,`name`,`user`,`mobile`,`face`,`deptname`,`deptallname`,`ranking`,`apptx`';
 		$posts  = $user;
