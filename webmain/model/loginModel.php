@@ -60,7 +60,7 @@ class loginClassModel extends Model
 			//當LDAP使用者資訊型態不為陣列時則為錯誤訊息
 			if(!is_array($ldapUserInfo))
 			{
-			    return $ldapUserInfo;
+				return $ldapUserInfo;
 			}
 			#endregion
 
@@ -112,7 +112,7 @@ class loginClassModel extends Model
 				'deptname' => $ldapUserInfo["deptName"],
 				'superid' => $ldapUserInfo["managerID"],
 				'superman' => $ldapUserInfo["managerName"],
-				'ranking' => $ldapUserInfo["title"],
+				'ranking' => $ldapUserInfo["userTitle"],
 				'mobile' => $ldapUserInfo["cellPhone"],
 				'email' => $ldapUserInfo["email"],
 				'weixinid' => $ldapUserInfo["wechatID"],
